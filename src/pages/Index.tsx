@@ -8,9 +8,18 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import Modal from "../components/Modal";
+import AddEventForm from "../components/AddEventForm";
 
 const Index = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    dateTime: "",
+    duration: "",
+  });
 
   const navigationItems = [
     { icon: MessageCircle, label: "Event Management", active: true },
@@ -120,7 +129,10 @@ const Index = () => {
                   Manage your events and submissions here.
                 </p>
               </div>
-              <button className="mt-4 sm:mt-0 flex items-center px-4 py-2 bg-blue-600 text-white  rounded-lg hover:bg-blue-400 transition-colors duration-200">
+              <button
+                onClick={() => setModalOpen(true)}
+                className="mt-4 sm:mt-0 flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+              >
                 Add Event
               </button>
             </div>
@@ -175,6 +187,26 @@ const Index = () => {
           </div>
         </main>
       </div>
+
+      {/* Modal */}
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Add New Event"
+        confirmText="Create Event"
+        onConfirm={() => {
+          console.log("Form data:", formData);
+          setModalOpen(false);
+          setFormData({
+            title: "",
+            description: "",
+            dateTime: "",
+            duration: "",
+          });
+        }}
+      >
+        <AddEventForm formData={formData} setFormData={setFormData} />
+      </Modal>
     </div>
   );
 };
