@@ -18,7 +18,6 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [bio, setBio] = useState("");
 
   const [signup, { isLoading }] = useSignupMutation();
 
@@ -42,7 +41,6 @@ const Signup = () => {
         name,
         email,
         password,
-        bio: bio || undefined,
       }).unwrap();
       dispatch(
         setCredentials({
@@ -129,26 +127,6 @@ const Signup = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     className="flex h-12 w-full rounded-lg border-2 border-blue-500 bg-input px-4 py-3 text-base placeholder:text-muted-foreground focus-visible:outline-none  transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm hover:shadow-md pl-10"
                     required
-                    disabled={isLoading}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label
-                  htmlFor="bio"
-                  className="text-sm font-medium text-foreground"
-                >
-                  Bio (Optional)
-                </label>
-                <div className="relative">
-                  <textarea
-                    id="bio"
-                    placeholder="Tell us about yourself"
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    rows={3}
-                    className="flex w-full rounded-lg border-2 border-blue-500 bg-input px-4 py-3 text-base placeholder:text-muted-foreground focus-visible:outline-none transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm hover:shadow-md resize-none"
                     disabled={isLoading}
                   />
                 </div>
