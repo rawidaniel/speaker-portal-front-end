@@ -6,6 +6,7 @@ import {
   ChevronRight,
   Menu,
   X,
+  Settings,
 } from "lucide-react";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -23,15 +24,29 @@ import {
 import Modal from "../components/Modal";
 import AddEventForm from "../components/AddEventForm";
 import ProfileDropdown from "../components/ProfileDropdown";
+import SettingsContent from "../components/SettingsContent";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Index = () => {
   const dispatch = useAppDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
   const { modalOpen, sidebarOpen } = useAppSelector((state: any) => state.ui);
   const { formData, isFormValid, formErrors, currentPage } = useAppSelector(
     (state: any) => state.events
   );
   const { user } = useAppSelector((state: any) => state.auth);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | undefined>(
+    user?.photoUrl ? `http://localhost:3000${user.photoUrl}` : undefined
+  );
+  console.log({
+    user,
+    previewImage,
+    p: user?.photoUrl ? `http://localhost:3000${user.photoUrl}` : undefined,
+  });
+  // Determine current page based on location
+  const isSettingsPage = location.pathname === "/settings";
 
   // RTK Query hooks
   const { data: eventsResponse, isLoading } = useGetEventsQuery({
@@ -39,10 +54,20 @@ const Index = () => {
     limit: 10,
   });
   const [createEvent, { isLoading: isCreating }] = useCreateEventMutation();
-  console.log({ user });
 
   const navigationItems = [
-    { icon: MessageCircle, label: "Event Management", active: true },
+    {
+      icon: MessageCircle,
+      label: "Event Management",
+      active: !isSettingsPage,
+      path: "/",
+    },
+    {
+      icon: Settings,
+      label: "Settings",
+      active: isSettingsPage,
+      path: "/settings",
+    },
   ];
 
   const handleCreateEvent = async () => {
@@ -105,11 +130,11 @@ const Index = () => {
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-2">
             {navigationItems.map((item, index) => (
-              <a
+              <button
                 key={index}
-                href="#"
+                onClick={() => navigate(item.path)}
                 className={`
-                  flex items-center px-4 py-3 rounded-lg transition-colors duration-200
+                  w-full flex items-center px-4 py-3 rounded-lg transition-colors duration-200
                   ${
                     item.active
                       ? "bg-blue-600 text-white"
@@ -119,7 +144,7 @@ const Index = () => {
               >
                 <item.icon className="w-5 h-5 mr-3" />
                 <span className="font-medium">{item.label}</span>
-              </a>
+              </button>
             ))}
           </nav>
 
@@ -156,7 +181,7 @@ const Index = () => {
                 <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
                   {user?.photoUrl ? (
                     <img
-                      src={user.photoUrl}
+                      src={previewImage}
                       alt={user.name}
                       className="w-10 h-10 rounded-full object-cover"
                     />
@@ -190,142 +215,146 @@ const Index = () => {
 
         {/* Main content area */}
         <main className="flex-1 overflow-auto bg-white">
-          <div className="p-6">
-            {/* Page header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Event Management
-                </h1>
-                <p className="text-gray-600 mt-1">
-                  Manage your events and submissions here.
-                </p>
+          {isSettingsPage ? (
+            <SettingsContent />
+          ) : (
+            <div className="p-6">
+              {/* Page header */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    Event Management
+                  </h1>
+                  <p className="text-gray-600 mt-1">
+                    Manage your events and submissions here.
+                  </p>
+                </div>
+                <button
+                  onClick={() => dispatch(setModalOpen(true))}
+                  className="mt-4 sm:mt-0 flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                >
+                  Add Event
+                </button>
               </div>
-              <button
-                onClick={() => dispatch(setModalOpen(true))}
-                className="mt-4 sm:mt-0 flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-              >
-                Add Event
-              </button>
-            </div>
 
-            {/* Data table */}
-            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Title
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Start Date
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Duration
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Zoom Link
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {isLoading ? (
+              {/* Data table */}
+              <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50">
                       <tr>
-                        <td colSpan={4} className="px-6 py-12 text-center">
-                          <div className="text-gray-500">
-                            <p className="text-lg font-medium">Loading...</p>
-                          </div>
-                        </td>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Title
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Start Date
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Duration
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Zoom Link
+                        </th>
                       </tr>
-                    ) : events.length === 0 ? (
-                      <tr>
-                        <td colSpan={4} className="px-6 py-12 text-center">
-                          <div className="text-gray-500">
-                            <p className="text-lg font-medium">
-                              No Results Found!
-                            </p>
-                          </div>
-                        </td>
-                      </tr>
-                    ) : (
-                      events.map((event: any) => (
-                        <tr key={event.id}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {event.title}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {new Date(event.dateTime).toLocaleDateString()}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {event.duration} minutes
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {event.zoomLink ? (
-                              <a
-                                href={event.zoomLink}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 hover:text-blue-800 underline"
-                              >
-                                Join Meeting
-                              </a>
-                            ) : (
-                              "N/A"
-                            )}
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {isLoading ? (
+                        <tr>
+                          <td colSpan={4} className="px-6 py-12 text-center">
+                            <div className="text-gray-500">
+                              <p className="text-lg font-medium">Loading...</p>
+                            </div>
                           </td>
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Pagination */}
-            {pagination && (
-              <div className="flex items-center justify-between mt-6">
-                <div className="text-sm text-gray-700">
-                  Showing page {pagination.page} of {pagination.lastPage}(
-                  {pagination.total} total events)
+                      ) : events.length === 0 ? (
+                        <tr>
+                          <td colSpan={4} className="px-6 py-12 text-center">
+                            <div className="text-gray-500">
+                              <p className="text-lg font-medium">
+                                No Results Found!
+                              </p>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        events.map((event: any) => (
+                          <tr key={event.id}>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              {event.title}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {new Date(event.dateTime).toLocaleDateString()}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {event.duration} minutes
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {event.zoomLink ? (
+                                <a
+                                  href={event.zoomLink}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:text-blue-800 underline"
+                                >
+                                  Join Meeting
+                                </a>
+                              ) : (
+                                "N/A"
+                              )}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => handlePageChange(pagination.prev || 1)}
-                    disabled={!pagination.prev}
-                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
+              </div>
 
-                  {pagination.links.map((link: any) => (
+              {/* Pagination */}
+              {pagination && (
+                <div className="flex items-center justify-between mt-6">
+                  <div className="text-sm text-gray-700">
+                    Showing page {pagination.page} of {pagination.lastPage}(
+                    {pagination.total} total events)
+                  </div>
+                  <div className="flex items-center space-x-2">
                     <button
-                      key={link.page}
-                      onClick={() => handlePageChange(link.page)}
-                      disabled={link.active}
-                      className={`px-3 py-2 text-sm rounded-lg transition-colors duration-200 ${
-                        link.active
-                          ? "bg-blue-600 text-white"
-                          : "text-gray-700 hover:bg-gray-100"
-                      }`}
+                      onClick={() => handlePageChange(pagination.prev || 1)}
+                      disabled={!pagination.prev}
+                      className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {link.label}
+                      <ChevronLeft className="w-5 h-5" />
                     </button>
-                  ))}
 
-                  <button
-                    onClick={() =>
-                      handlePageChange(pagination.next || pagination.lastPage)
-                    }
-                    disabled={!pagination.next}
-                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
+                    {pagination.links.map((link: any) => (
+                      <button
+                        key={link.page}
+                        onClick={() => handlePageChange(link.page)}
+                        disabled={link.active}
+                        className={`px-3 py-2 text-sm rounded-lg transition-colors duration-200 ${
+                          link.active
+                            ? "bg-blue-600 text-white"
+                            : "text-gray-700 hover:bg-gray-100"
+                        }`}
+                      >
+                        {link.label}
+                      </button>
+                    ))}
+
+                    <button
+                      onClick={() =>
+                        handlePageChange(pagination.next || pagination.lastPage)
+                      }
+                      disabled={!pagination.next}
+                      className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </main>
       </div>
 

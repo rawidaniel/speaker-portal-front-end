@@ -34,6 +34,14 @@ const App = () => (
             </AuthGuard>
           }
         />
+        <Route
+          path="/settings"
+          element={
+            <AuthGuard requireAuth={true}>
+              <Index />
+            </AuthGuard>
+          }
+        />
       </Routes>
     </BrowserRouter>
   </Provider>

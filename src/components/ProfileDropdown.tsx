@@ -48,8 +48,7 @@ const ProfileDropdown = ({ isOpen, onClose }: ProfileDropdownProps) => {
   };
 
   const handleAccountSettings = () => {
-    // Navigate to account settings page or open settings modal
-    console.log("Navigate to account settings");
+    navigate("/settings");
     onClose();
   };
 
