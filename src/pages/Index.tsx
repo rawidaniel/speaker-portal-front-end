@@ -34,6 +34,7 @@ const Index = () => {
     (state: any) => state.events
   );
   const { user } = useAppSelector((state: any) => state.auth);
+  console.log({ user });
 
   // RTK Query hooks
   const { data: eventsResponse, isLoading } = useGetEventsQuery({
@@ -147,7 +148,7 @@ const Index = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <header className="bg-white shadow-sm border-b border-gray-200">
-          <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center px-6 py-4">
             {/* Mobile menu button */}
             <button
               onClick={() => dispatch(setSidebarOpen(!sidebarOpen))}
@@ -160,10 +161,8 @@ const Index = () => {
               )}
             </button>
 
-            {/* Search bar */}
-
-            {/* User profile */}
-            <div className="flex items-center space-x-4">
+            {/* User profile and logout button pushed to right */}
+            <div className="flex items-center space-x-4 ml-auto">
               <button
                 onClick={handleLogout}
                 className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200"

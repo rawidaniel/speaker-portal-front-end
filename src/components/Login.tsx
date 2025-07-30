@@ -37,6 +37,7 @@ const Login = () => {
 
     try {
       const result = await login({ email, password }).unwrap();
+      console.log({ result });
       dispatch(
         setCredentials({
           user: result.user,
