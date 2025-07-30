@@ -1,14 +1,62 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { useLoginMutation } from "../store/services/authApi";
+import {
+  setCredentials,
+  setError,
+  clearError,
+} from "../store/slices/authSlice";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { isAuthenticated, error } = useAppSelector((state) => state.auth);
+
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [login, { isLoading }] = useLoginMutation();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Clear error when component mounts
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login attempt:", { email, password });
+
+    try {
+      const result = await login({ email, password }).unwrap();
+      dispatch(
+        setCredentials({
+          user: result.user,
+          token: result.accessToken,
+        })
+      );
+      navigate("/");
+    } catch (err: unknown) {
+      const errorMessage =
+        err &&
+        typeof err === "object" &&
+        "data" in err &&
+        typeof err.data === "object" &&
+        err.data &&
+        "message" in err.data &&
+        typeof err.data.message === "string"
+          ? err.data.message
+          : "Login failed. Please try again.";
+      dispatch(setError(errorMessage));
+    }
   };
 
   return (
@@ -24,6 +72,12 @@ const Login = () => {
               Sign in to your account to continue
             </p>
           </div>
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+              {error}
+            </div>
+          )}
 
           <div className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -44,6 +98,7 @@ const Login = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     className="flex h-12 w-full rounded-lg border-2 border-blue-500 bg-input px-4 py-3 text-base placeholder:text-muted-foreground focus-visible:outline-none  transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm hover:shadow-md pl-10"
                     required
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -65,11 +120,13 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     className="flex h-12 w-full rounded-lg border-2 border-blue-500 bg-input px-4 py-3 text-base placeholder:text-muted-foreground focus-visible:outline-none  transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm hover:shadow-md pl-10"
                     required
+                    disabled={isLoading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    disabled={isLoading}
                   >
                     {showPassword ? (
                       <EyeOff className="w-5 h-5" />
@@ -82,9 +139,10 @@ const Login = () => {
 
               <button
                 type="submit"
+                disabled={isLoading}
                 className="w-full h-12 text-base inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md transition-all duration-300 border-blue-500 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 bg-blue-500 text-white text-primary-foreground shadow-elegant hover:shadow-glow hover:scale-[1.02] font-semibold"
               >
-                Sign In
+                {isLoading ? "Signing In..." : "Sign In"}
               </button>
             </form>
 

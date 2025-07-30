@@ -9,10 +9,15 @@ interface FormData {
 
 interface AddEventFormProps {
   formData: FormData;
-  setFormData: (data: FormData) => void;
+  setFormData: (data: Partial<FormData>) => void;
+  errors?: Record<string, string>;
 }
 
-const AddEventForm = ({ formData, setFormData }: AddEventFormProps) => {
+const AddEventForm = ({
+  formData,
+  setFormData,
+  errors = {},
+}: AddEventFormProps) => {
   return (
     <div className="space-y-4">
       {/* Title Field */}
@@ -27,10 +32,15 @@ const AddEventForm = ({ formData, setFormData }: AddEventFormProps) => {
           type="text"
           id="title"
           value={formData.title}
-          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+          onChange={(e) => setFormData({ title: e.target.value })}
           placeholder="Enter event title"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors.title ? "border-red-500" : "border-gray-300"
+          }`}
         />
+        {errors.title && (
+          <p className="mt-1 text-sm text-red-600">{errors.title}</p>
+        )}
       </div>
 
       {/* Description Field */}
@@ -44,13 +54,16 @@ const AddEventForm = ({ formData, setFormData }: AddEventFormProps) => {
         <textarea
           id="description"
           value={formData.description}
-          onChange={(e) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
+          onChange={(e) => setFormData({ description: e.target.value })}
           placeholder="Enter event description"
           rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+          className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none ${
+            errors.description ? "border-red-500" : "border-gray-300"
+          }`}
         />
+        {errors.description && (
+          <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+        )}
       </div>
 
       {/* Date & Time Field */}
@@ -67,12 +80,15 @@ const AddEventForm = ({ formData, setFormData }: AddEventFormProps) => {
             type="datetime-local"
             id="dateTime"
             value={formData.dateTime}
-            onChange={(e) =>
-              setFormData({ ...formData, dateTime: e.target.value })
-            }
-            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            onChange={(e) => setFormData({ dateTime: e.target.value })}
+            className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              errors.dateTime ? "border-red-500" : "border-gray-300"
+            }`}
           />
         </div>
+        {errors.dateTime && (
+          <p className="mt-1 text-sm text-red-600">{errors.dateTime}</p>
+        )}
       </div>
 
       {/* Duration Field */}
@@ -89,14 +105,17 @@ const AddEventForm = ({ formData, setFormData }: AddEventFormProps) => {
             type="number"
             id="duration"
             value={formData.duration}
-            onChange={(e) =>
-              setFormData({ ...formData, duration: e.target.value })
-            }
+            onChange={(e) => setFormData({ duration: e.target.value })}
             placeholder="Enter duration in minutes"
             min="1"
-            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              errors.duration ? "border-red-500" : "border-gray-300"
+            }`}
           />
         </div>
+        {errors.duration && (
+          <p className="mt-1 text-sm text-red-600">{errors.duration}</p>
+        )}
       </div>
     </div>
   );
