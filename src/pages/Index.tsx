@@ -6,35 +6,32 @@ import {
   ChevronRight,
   Menu,
   X,
-  LogOut,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setModalOpen, setSidebarOpen } from "../store/slices/uiSlice";
 import {
   useGetEventsQuery,
   useCreateEventMutation,
 } from "../store/services/eventsApi";
-import { useLogoutMutation } from "../store/services/authApi";
 import {
   setFormData,
   resetFormData,
   validateForm,
   setCurrentPage,
 } from "../store/slices/eventsSlice";
-import { logout } from "../store/slices/authSlice";
 import Modal from "../components/Modal";
 import AddEventForm from "../components/AddEventForm";
+import ProfileDropdown from "../components/ProfileDropdown";
 
 const Index = () => {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { modalOpen, sidebarOpen } = useAppSelector((state: any) => state.ui);
   const { formData, isFormValid, formErrors, currentPage } = useAppSelector(
     (state: any) => state.events
   );
   const { user } = useAppSelector((state: any) => state.auth);
-  console.log({ user });
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   // RTK Query hooks
   const { data: eventsResponse, isLoading } = useGetEventsQuery({
@@ -42,7 +39,7 @@ const Index = () => {
     limit: 10,
   });
   const [createEvent, { isLoading: isCreating }] = useCreateEventMutation();
-  const [logoutApi] = useLogoutMutation();
+  console.log({ user });
 
   const navigationItems = [
     { icon: MessageCircle, label: "Event Management", active: true },
@@ -66,17 +63,6 @@ const Index = () => {
         // You can add an error notification here
         console.error("Failed to create event:", error);
       }
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logoutApi().unwrap();
-    } catch (error) {
-      console.error("Logout API error:", error);
-    } finally {
-      dispatch(logout());
-      navigate("/login");
     }
   };
 
@@ -161,16 +147,12 @@ const Index = () => {
               )}
             </button>
 
-            {/* User profile and logout button pushed to right */}
-            <div className="flex items-center space-x-4 ml-auto">
-              <button
-                onClick={handleLogout}
-                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200"
-                title="Logout"
+            {/* User profile and dropdown pushed to right */}
+            <div className="flex items-center space-x-4 ml-auto relative">
+              <div
+                className="flex items-center space-x-3 cursor-pointer"
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
               >
-                <LogOut className="w-6 h-6" />
-              </button>
-              <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
                   {user?.photoUrl ? (
                     <img
@@ -190,8 +172,18 @@ const Index = () => {
                     {user?.email || "user@example.com"}
                   </p>
                 </div>
-                <ChevronDown className="w-4 h-4 text-gray-400" />
+                <ChevronDown
+                  className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
+                    profileDropdownOpen ? "rotate-180" : ""
+                  }`}
+                />
               </div>
+
+              {/* Profile Dropdown */}
+              <ProfileDropdown
+                isOpen={profileDropdownOpen}
+                onClose={() => setProfileDropdownOpen(false)}
+              />
             </div>
           </div>
         </header>
