@@ -37,14 +37,10 @@ const Index = () => {
   );
   const { user } = useAppSelector((state: any) => state.auth);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string | undefined>(
+  const [previewImage] = useState<string | undefined>(
     user?.photoUrl ? `http://localhost:3000${user.photoUrl}` : undefined
   );
-  console.log({
-    user,
-    previewImage,
-    p: user?.photoUrl ? `http://localhost:3000${user.photoUrl}` : undefined,
-  });
+
   // Determine current page based on location
   const isSettingsPage = location.pathname === "/settings";
 
@@ -147,11 +143,6 @@ const Index = () => {
               </button>
             ))}
           </nav>
-
-          {/* Footer */}
-          <div className="p-4 border-t border-gray-200">
-            <p className="text-xs text-gray-500">localhost:5174/contact-us</p>
-          </div>
         </div>
       </div>
 
