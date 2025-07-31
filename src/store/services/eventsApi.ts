@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export interface Event {
   id: string;
@@ -86,7 +87,7 @@ export interface EventResponsesResponse {
 export const eventsApi = createApi({
   reducerPath: "eventsApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/api", // Update this with your actual API URL
+    baseUrl: `${backendUrl}/api`, // Update this with your actual API URL
     prepareHeaders: (headers) => {
       // Add auth token if needed
       const token = localStorage.getItem("token");

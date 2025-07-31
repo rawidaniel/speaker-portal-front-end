@@ -16,6 +16,8 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 const Layout = ({ children }: LayoutProps) => {
   const dispatch = useAppDispatch();
   const location = useLocation();
@@ -24,7 +26,7 @@ const Layout = ({ children }: LayoutProps) => {
   const { user } = useAppSelector((state: any) => state.auth);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | undefined>(
-    user?.photoUrl ? `http://localhost:3000${user.photoUrl}` : undefined
+    user?.photoUrl ? `h${backendUrl}${user.photoUrl}` : undefined
   );
 
   // Determine current page based on location
@@ -47,7 +49,7 @@ const Layout = ({ children }: LayoutProps) => {
 
   useEffect(() => {
     setPreviewImage(
-      user?.photoUrl ? `http://localhost:3000${user.photoUrl}` : undefined
+      user?.photoUrl ? `${backendUrl}${user.photoUrl}` : undefined
     );
   }, [user]);
 

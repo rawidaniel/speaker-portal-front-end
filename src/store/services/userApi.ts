@@ -2,6 +2,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { User } from "./authApi";
 import { setUser } from "../slices/authSlice";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 export interface UpdateProfileRequest {
   name?: string;
   email?: string;
@@ -13,7 +15,7 @@ export interface UpdateProfileRequest {
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/api",
+    baseUrl: `${backendUrl}/api`,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("token");
       if (token) {

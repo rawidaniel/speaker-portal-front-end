@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export interface User {
   id: string;
@@ -34,7 +35,8 @@ export interface SignupRequest {
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/api", // Update this with your actual API URL
+    baseUrl: `${backendUrl}/api`, // Update this with your actual API URL
+    //
   }),
   tagTypes: ["Auth"],
   endpoints: (builder) => ({

@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { User } from "../services/authApi";
 
+const backendUrl = import.meta.env.BACKEND_URL;
 interface UserState {
   user: User | null;
   isLoading: boolean;
@@ -38,7 +39,7 @@ export const updateUserProfile = createAsyncThunk(
       if (userData.profileImage)
         formData.append("profileImage", userData.profileImage);
 
-      const response = await fetch("http://localhost:3000/api/user/profile", {
+      const response = await fetch(`${backendUrl}/api/user/profile`, {
         method: "PATCH",
         headers: {
           authorization: `Bearer ${localStorage.getItem("token") || ""}`,

@@ -5,6 +5,8 @@ import { useUpdateProfileMutation } from "../store/services/userApi";
 import { useGetCurrentUserQuery } from "../store/services/authApi";
 import type { RootState } from "../store/store";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 const SettingsContent = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -30,9 +32,7 @@ const SettingsContent = () => {
   });
 
   const [previewImage, setPreviewImage] = useState<string | null>(
-    currentUser?.photoUrl
-      ? `http://localhost:3000${currentUser.photoUrl}`
-      : null
+    currentUser?.photoUrl ? `${backendUrl}${currentUser.photoUrl}` : null
   );
 
   // Update form data when user data changes
@@ -46,9 +46,7 @@ const SettingsContent = () => {
         image: null,
       });
       setPreviewImage(
-        currentUser.photoUrl
-          ? `http://localhost:3000${currentUser.photoUrl}`
-          : null
+        currentUser.photoUrl ? `${backendUrl}${currentUser.photoUrl}` : null
       );
     }
   }, [currentUser]);
