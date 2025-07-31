@@ -104,49 +104,6 @@ const EventResponses = () => {
           </div>
         </div>
 
-        {/* Event Details */}
-        {eventDetails && (
-          <div className="mb-6">
-            <div className="bg-white rounded-lg shadow p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center space-x-4">
-                <Calendar className="w-6 h-6 text-blue-600" />
-                <span className="text-gray-700 font-medium">
-                  {new Date(eventDetails.dateTime).toLocaleString()}
-                </span>
-                <Clock className="w-5 h-5 text-gray-400 ml-4" />
-                <span className="text-gray-500">
-                  {eventDetails.duration} min
-                </span>
-                {eventDetails.zoomLink && (
-                  <a
-                    href={eventDetails.zoomLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ml-4 text-blue-600 underline"
-                  >
-                    Zoom Link
-                  </a>
-                )}
-              </div>
-              <div className="flex items-center space-x-4 mt-4 sm:mt-0">
-                <Users className="w-5 h-5 text-gray-400" />
-                <span className="text-gray-700">
-                  {responses.length} responses
-                </span>
-                <span className="ml-4 text-green-600">
-                  Yes: {getResponseCount("YES")}
-                </span>
-                <span className="ml-2 text-yellow-600">
-                  Maybe: {getResponseCount("MAYBE")}
-                </span>
-                <span className="ml-2 text-red-600">
-                  No: {getResponseCount("NO")}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Responses Table */}
         <div className="bg-white rounded-lg shadow overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">

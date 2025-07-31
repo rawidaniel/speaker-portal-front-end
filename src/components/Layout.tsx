@@ -29,9 +29,9 @@ const Layout = ({ children }: LayoutProps) => {
 
   // Determine current page based on location
   const isSettingsPage = location.pathname === "/settings";
-  const isEventResponsesPage =
-    location.pathname.includes("/events/") &&
-    location.pathname.includes("/responses");
+  // const isEventResponsesPage =
+  //   location.pathname.includes("/events/") &&
+  //   location.pathname.includes("/responses");
 
   const navigationItems = [
     {
