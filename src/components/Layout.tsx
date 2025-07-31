@@ -6,7 +6,7 @@ import {
   X,
   Settings,
 } from "lucide-react";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setSidebarOpen } from "../store/slices/uiSlice";
 import ProfileDropdown from "./ProfileDropdown";
@@ -23,9 +23,11 @@ const Layout = ({ children }: LayoutProps) => {
   const { sidebarOpen } = useAppSelector((state: any) => state.ui);
   const { user } = useAppSelector((state: any) => state.auth);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const [previewImage] = useState<string | undefined>(
+  const [previewImage, setPreviewImage] = useState<string | undefined>(
     user?.photoUrl ? `http://localhost:3000${user.photoUrl}` : undefined
   );
+
+  console.log({ user, previewImage });
 
   // Determine current page based on location
   const isSettingsPage = location.pathname === "/settings";
@@ -47,6 +49,12 @@ const Layout = ({ children }: LayoutProps) => {
       path: "/settings",
     },
   ];
+
+  useEffect(() => {
+    setPreviewImage(
+      user?.photoUrl ? `http://localhost:3000${user.photoUrl}` : undefined
+    );
+  }, [user]);
 
   return (
     <div className="flex h-screen bg-gray-50">

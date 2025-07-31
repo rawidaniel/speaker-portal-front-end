@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import AuthGuard from "./components/AuthGuard";
+import AuthInitializer from "./components/AuthInitializer";
 import Login from "./components/Login";
 import Signup from "./components/SIgnup";
 import Index from "./pages/Index";
@@ -10,6 +11,7 @@ import EventResponses from "./pages/EventResponses";
 const App = () => (
   <Provider store={store}>
     <BrowserRouter>
+      <AuthInitializer />
       <Routes>
         <Route
           path="/login"
