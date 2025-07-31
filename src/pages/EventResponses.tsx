@@ -4,6 +4,7 @@ import {
   useGetEventResponsesQuery,
   useGetEventByIdQuery,
 } from "../store/services/eventsApi";
+import Layout from "../components/Layout";
 
 const EventResponses = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -81,74 +82,72 @@ const EventResponses = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => navigate(-1)}
-                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5 text-gray-600" />
-              </button>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Event Responses
-                </h1>
-                <p className="text-sm text-gray-500">
-                  {eventDetails?.title || "Event Details"}
-                </p>
+    <Layout>
+      <div className="p-6">
+        {/* Header */}
+        <div className="mb-6">
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-600" />
+            </button>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Event Responses
+              </h1>
+              <p className="text-sm text-gray-500">
+                {eventDetails?.title || "Event Details"}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Event Details */}
+        {eventDetails && (
+          <div className="mb-6">
+            <div className="bg-white rounded-lg shadow p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center space-x-4">
+                <Calendar className="w-6 h-6 text-blue-600" />
+                <span className="text-gray-700 font-medium">
+                  {new Date(eventDetails.dateTime).toLocaleString()}
+                </span>
+                <Clock className="w-5 h-5 text-gray-400 ml-4" />
+                <span className="text-gray-500">
+                  {eventDetails.duration} min
+                </span>
+                {eventDetails.zoomLink && (
+                  <a
+                    href={eventDetails.zoomLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-4 text-blue-600 underline"
+                  >
+                    Zoom Link
+                  </a>
+                )}
+              </div>
+              <div className="flex items-center space-x-4 mt-4 sm:mt-0">
+                <Users className="w-5 h-5 text-gray-400" />
+                <span className="text-gray-700">
+                  {responses.length} responses
+                </span>
+                <span className="ml-4 text-green-600">
+                  Yes: {getResponseCount("YES")}
+                </span>
+                <span className="ml-2 text-yellow-600">
+                  Maybe: {getResponseCount("MAYBE")}
+                </span>
+                <span className="ml-2 text-red-600">
+                  No: {getResponseCount("NO")}
+                </span>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Event Details */}
-      {eventDetails && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-          <div className="bg-white rounded-lg shadow p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center space-x-4">
-              <Calendar className="w-6 h-6 text-blue-600" />
-              <span className="text-gray-700 font-medium">
-                {new Date(eventDetails.dateTime).toLocaleString()}
-              </span>
-              <Clock className="w-5 h-5 text-gray-400 ml-4" />
-              <span className="text-gray-500">{eventDetails.duration} min</span>
-              {eventDetails.zoomLink && (
-                <a
-                  href={eventDetails.zoomLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-4 text-blue-600 underline"
-                >
-                  Zoom Link
-                </a>
-              )}
-            </div>
-            <div className="flex items-center space-x-4 mt-4 sm:mt-0">
-              <Users className="w-5 h-5 text-gray-400" />
-              <span className="text-gray-700">
-                {responses.length} responses
-              </span>
-              <span className="ml-4 text-green-600">
-                Yes: {getResponseCount("YES")}
-              </span>
-              <span className="ml-2 text-yellow-600">
-                Maybe: {getResponseCount("MAYBE")}
-              </span>
-              <span className="ml-2 text-red-600">
-                No: {getResponseCount("NO")}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Responses Table */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        {/* Responses Table */}
         <div className="bg-white rounded-lg shadow overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead>
@@ -204,7 +203,7 @@ const EventResponses = () => {
           </table>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
