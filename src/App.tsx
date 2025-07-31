@@ -5,6 +5,7 @@ import AuthGuard from "./components/AuthGuard";
 import Login from "./components/Login";
 import Signup from "./components/SIgnup";
 import Index from "./pages/Index";
+import EventResponses from "./pages/EventResponses";
 
 const App = () => (
   <Provider store={store}>
@@ -39,6 +40,14 @@ const App = () => (
           element={
             <AuthGuard requireAuth={true}>
               <Index />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/events/:eventId/responses"
+          element={
+            <AuthGuard requireAuth={true}>
+              <EventResponses />
             </AuthGuard>
           }
         />

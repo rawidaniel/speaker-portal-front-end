@@ -54,6 +54,35 @@ export interface UpdateEventRequest {
   zoomLink?: string;
 }
 
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export interface EventResponse {
+  id: string;
+  status: "YES" | "NO" | "MAYBE";
+  userId: string;
+  eventId: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  user: User;
+}
+
+export interface EventResponsesResponse {
+  data: EventResponse[];
+  payload: {
+    pagination: {
+      page: number;
+      itemsPerPage: number;
+      total: number;
+      lastPage: number;
+    };
+  };
+}
+
 export const eventsApi = createApi({
   reducerPath: "eventsApi",
   baseQuery: fetchBaseQuery({
@@ -111,6 +140,13 @@ export const eventsApi = createApi({
       }),
       invalidatesTags: ["Event"],
     }),
+    getEventResponses: builder.query<EventResponsesResponse, string>({
+      query: (eventId) => `event/${eventId}`,
+      providesTags: (result, error, eventId) => [
+        { type: "Event", id: eventId },
+        "Event",
+      ],
+    }),
   }),
 });
 
@@ -120,4 +156,5 @@ export const {
   useCreateEventMutation,
   useUpdateEventMutation,
   useDeleteEventMutation,
+  useGetEventResponsesQuery,
 } = eventsApi;

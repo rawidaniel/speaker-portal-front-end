@@ -269,7 +269,13 @@ const Index = () => {
                         </tr>
                       ) : (
                         events.map((event: any) => (
-                          <tr key={event.id}>
+                          <tr
+                            key={event.id}
+                            className="cursor-pointer hover:bg-gray-50 transition-colors"
+                            onClick={() =>
+                              navigate(`/events/${event.id}/responses`)
+                            }
+                          >
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                               {event.title}
                             </td>
@@ -286,6 +292,7 @@ const Index = () => {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-blue-600 hover:text-blue-800 underline"
+                                  onClick={(e) => e.stopPropagation()}
                                 >
                                   Join Meeting
                                 </a>
