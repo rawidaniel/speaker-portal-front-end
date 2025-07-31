@@ -5,20 +5,20 @@ import { setUser } from "../store/slices/authSlice";
 
 const AuthInitializer = () => {
   const dispatch = useAppDispatch();
-  const { token, user } = useAppSelector((state) => state.auth);
+  const { token } = useAppSelector((state) => state.auth);
 
-  // Only fetch user data if we have a token but no user data
-  const shouldFetchUser = token && !user;
+  // Always fetch user data if we have a token (to ensure fresh data)
+  const shouldFetchUser = !!token;
 
   const { data: currentUser } = useGetCurrentUserQuery(undefined, {
     skip: !shouldFetchUser,
   });
 
   useEffect(() => {
-    if (currentUser && shouldFetchUser) {
+    if (currentUser) {
       dispatch(setUser(currentUser));
     }
-  }, [currentUser, dispatch, shouldFetchUser]);
+  }, [currentUser, dispatch]);
 
   // Don't render anything, this is just for side effects
   return null;

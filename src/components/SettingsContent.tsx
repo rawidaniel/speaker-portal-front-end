@@ -2,6 +2,7 @@ import { Upload, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useUpdateProfileMutation } from "../store/services/userApi";
+import { useGetCurrentUserQuery } from "../store/services/authApi";
 import type { RootState } from "../store/store";
 
 const SettingsContent = () => {
@@ -13,6 +14,11 @@ const SettingsContent = () => {
   // Use the mutation hook
   const [updateProfile, { isLoading, error, isSuccess }] =
     useUpdateProfileMutation();
+
+  // Refetch user data when settings page loads to ensure fresh data
+  useGetCurrentUserQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   // Form state
   const [formData, setFormData] = useState({
@@ -80,7 +86,13 @@ const SettingsContent = () => {
 
   const handleSaveChanges = async () => {
     // Prepare data for update (only include fields that have values)
-    const updateData: any = {};
+    const updateData: Partial<{
+      name: string;
+      email: string;
+      bio: string;
+      contactInfo: string;
+      image: File;
+    }> = {};
     if (formData.name && formData.name !== currentUser?.name) {
       updateData.name = formData.name;
     }
@@ -103,7 +115,7 @@ const SettingsContent = () => {
         await updateProfile(updateData).unwrap();
         // The userApi will automatically update the auth state via onQueryStarted
         // No need to manually dispatch setUser here
-      } catch (error) {
+      } catch (error: unknown) {
         console.error("Failed to update profile:", error);
       }
     }
@@ -138,7 +150,8 @@ const SettingsContent = () => {
       {error && (
         <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
           {error && "data" in error
-            ? (error.data as any)?.message || "Failed to update profile"
+            ? (error.data as { message?: string })?.message ||
+              "Failed to update profile"
             : "An error occurred"}
         </div>
       )}

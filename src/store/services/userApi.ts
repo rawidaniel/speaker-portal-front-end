@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { User } from "./authApi";
+import { setUser } from "../slices/authSlice";
 
 export interface UpdateProfileRequest {
   name?: string;
@@ -46,6 +47,15 @@ export const userApi = createApi({
         };
       },
       invalidatesTags: ["User", "Auth"],
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data: updatedUser } = await queryFulfilled;
+          // Update the auth state with the new user data
+          dispatch(setUser(updatedUser));
+        } catch {
+          // If the query fails, we don't need to do anything
+        }
+      },
     }),
 
     getUserProfile: builder.query<User, void>({
