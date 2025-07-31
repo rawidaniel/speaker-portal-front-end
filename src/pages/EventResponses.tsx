@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Calendar, Clock, Users } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import {
   useGetEventResponsesQuery,
   useGetEventByIdQuery,
@@ -27,10 +27,6 @@ const EventResponses = () => {
   const error = responsesError || eventError;
 
   const responses = responsesData?.data || [];
-
-  const getResponseCount = (status: "YES" | "NO" | "MAYBE") => {
-    return responses.filter((response) => response.status === status).length;
-  };
 
   const getResponseColor = (status: "YES" | "NO" | "MAYBE") => {
     switch (status) {

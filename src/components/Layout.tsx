@@ -6,7 +6,7 @@ import {
   X,
   Settings,
 } from "lucide-react";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setSidebarOpen } from "../store/slices/uiSlice";
 import ProfileDropdown from "./ProfileDropdown";
@@ -27,13 +27,8 @@ const Layout = ({ children }: LayoutProps) => {
     user?.photoUrl ? `http://localhost:3000${user.photoUrl}` : undefined
   );
 
-  console.log({ user, previewImage });
-
   // Determine current page based on location
   const isSettingsPage = location.pathname === "/settings";
-  // const isEventResponsesPage =
-  //   location.pathname.includes("/events/") &&
-  //   location.pathname.includes("/responses");
 
   const navigationItems = [
     {
